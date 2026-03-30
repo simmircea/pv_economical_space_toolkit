@@ -2,7 +2,6 @@ from batem.core import solar
 from batem.core.weather import SiteWeatherData
 from scipy.optimize import differential_evolution
 
-from source.battery.model import Battery
 from source.house.model import House
 from source.house.services import ConsumptionTrimmer, ConsumptionAggregator
 from source.indicators.models import NPVConfig, neeg, self_consumption
@@ -17,8 +16,7 @@ from source.utils import TimeSpaceHandler
 from typing import Callable
 
 
-def get_house_neeg(house: House, pv_plant: PVPlant,
-                   battery: Battery | None = None) -> float:
+def get_house_neeg(house: House, pv_plant: PVPlant) -> float:
     """
     Get the NEEG of a house with a PV plant.
     The result is in kWh.
@@ -29,8 +27,7 @@ def get_house_neeg(house: House, pv_plant: PVPlant,
         print("Warning: No hourly consumption data")
         return 0
     load_by_time = house.consumption.usage_hourly
-    battery_power_by_time = (
-        battery.get_battery_power_by_time() if battery else {})
+    battery_power_by_time = {}
     return neeg(load_by_time, pv_production, battery_power_by_time)
 
 
